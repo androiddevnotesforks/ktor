@@ -123,8 +123,16 @@ public class ConcurrentList<T> : MutableList<T> {
         size = 0
     }
 
-    override fun iterator(): MutableIterator<T> {
-        error("Common concurrent list doesn't support iterator.")
+    override fun iterator(): MutableIterator<T> = object : MutableIterator<T> {
+        var index by shared(0)
+
+        override fun hasNext(): Boolean = index < this@ConcurrentList.size
+
+        override fun next(): T = this@ConcurrentList[index++]
+
+        override fun remove() {
+            error("Common concurrent list doesn't support remove in the iterator.")
+        }
     }
 
     override fun listIterator(): MutableListIterator<T> {
