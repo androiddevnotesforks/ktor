@@ -25,6 +25,33 @@ public class ConcurrentList<T> : MutableList<T> {
         makeShared()
     }
 
+    override fun hashCode(): Int = fold(7) { state, current -> Hash.combine(state, current.hashCode()) }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is List<*> || other.size != size) {
+            return false
+        }
+
+        forEachIndexed { index, item ->
+            if (other[index] != item) return false
+        }
+
+        return true
+    }
+
+    override fun toString(): String = buildString {
+        append('[')
+        this@ConcurrentList.forEachIndexed { index, item ->
+            append("$item")
+
+            if (index + 1 < size) {
+                append(", ")
+            }
+        }
+
+        append(']')
+    }
+
     override fun contains(element: T): Boolean = indexOf(element) >= 0
 
     override fun containsAll(elements: Collection<T>): Boolean = elements.all { contains(it) }
