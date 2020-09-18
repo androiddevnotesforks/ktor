@@ -43,6 +43,8 @@ public fun <B : Any, F : Any> HttpClient.feature(feature: HttpClientFeature<B, F
  * @throws [IllegalStateException] if [feature] is not installed.
  */
 public operator fun <B : Any, F: Any> HttpClient.get(feature: HttpClientFeature<B, F>): F {
+    feature(feature)?.let {  return it }
+
     val message = "Feature $feature is not installed. Consider using `install(${feature.key})` in client config first."
-    return feature(feature) ?: error(message)
+    error(message)
 }
